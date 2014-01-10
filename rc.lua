@@ -45,7 +45,7 @@ function run_once(cmd)
   awful.util.spawn_with_shell("pgrep -u $USER -x " .. findme .. " > /dev/null || (" .. cmd .. ")")
 end
 
-run_once("urxvtd")
+run_once("xterm")
 run_once("unclutter")
 -- }}}
 
@@ -64,30 +64,22 @@ editor     = os.getenv("EDITOR") or "nano" or "vi"
 editor_cmd = terminal .. " -e " .. editor
 
 -- user defined
-browser = "dwb"
-browser2   = "iron"
+browser = "iron"
+browser2   = "tor-browser-en"
 gui_editor = "gvim"
 graphics   = "gimp"
 mail       = terminal .. " -e mutt "
 
 local layouts = {
     awful.layout.suit.floating,
-    awful.layout.suit.tile,
-    awful.layout.suit.tile.left,
-    awful.layout.suit.tile.bottom,
-    awful.layout.suit.tile.top,
-    awful.layout.suit.fair,
-    awful.layout.suit.fair.horizontal,
-    awful.layout.suit.spiral,
-    awful.layout.suit.spiral.dwindle,
-    awful.layout.suit.max,
+    lain.layout.termfair,
 }
 -- }}}
 
 -- {{{ Tags
 tags = {
-   names = { "web", "term", "docs", "media", "files", "other" },
-   layout = { layouts[1], layouts[3], layouts[4], layouts[1], layouts[7], layouts[1] }
+   names = { "1", "2", "3", "4", "5", "6" },
+   layout = { layouts[1], layouts[1], layouts[1], layouts[1], layouts[1], layouts[1] }
 }
 for s = 1, screen.count() do
 -- Each screen has its own tag table.
@@ -394,7 +386,7 @@ root.buttons(awful.util.table.join(
 globalkeys = awful.util.table.join(
     -- Take a screenshot
     -- https://github.com/copycat-killer/dots/blob/master/bin/screenshot
-    awful.key({ altkey }, "p", function() os.execute("screenshot") end),
+    awful.key({ altkey }, "Print", function() os.execute("screenshot") end),
 
     -- Tag browsing
     awful.key({ modkey }, "Left",   awful.tag.viewprev       ),
@@ -440,7 +432,7 @@ globalkeys = awful.util.table.join(
         end),
 
     -- Show Menu
-    awful.key({ modkey }, "w",
+    awful.key({ modkey }, "F1",
         function ()
             mymainmenu:show({ keygrabber = true })
         end),
@@ -480,7 +472,7 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey, "Shift"   }, "q",      awesome.quit),
 
     -- Dropdown terminal
-    awful.key({ modkey,	          }, "z",      function () drop(terminal) end),
+    awful.key({ modkey,	          }, "`",      function () drop(terminal) end),
 
     -- Widgets popups
     awful.key({ altkey,           }, "c",      function () lain.widgets.calendar:show(7) end),
@@ -488,26 +480,26 @@ globalkeys = awful.util.table.join(
     awful.key({ altkey,           }, "w",      function () yawn.show(7) end),
 
     -- ALSA volume control
-    awful.key({ altkey }, "Up",
+    awful.key({ }, "XF86AudioRaiseVolume",
         function ()
             awful.util.spawn("amixer -q set Master 1%+")
             volumewidget.update()
         end),
-    awful.key({ altkey }, "Down",
+    awful.key({ }, "XF86AudioLowerVolume",
         function ()
             awful.util.spawn("amixer -q set Master 1%-")
             volumewidget.update()
         end),
-    awful.key({ altkey }, "m",
+    awful.key({ }, "XF86AudioMute",
         function ()
             awful.util.spawn("amixer -q set Master playback toggle")
             volumewidget.update()
         end),
-    awful.key({ altkey, "Control" }, "m",
-        function ()
-            awful.util.spawn("amixer -q set Master playback 100%")
-            volumewidget.update()
-        end),
+  --awful.key({ altkey, "Control" }, "m",
+  --    function ()
+  --       awful.util.spawn("amixer -q set Master playback 100%")
+  --        volumewidget.update()
+  --    end),
 
     -- MPD control
     awful.key({ altkey, "Control" }, "Up",
@@ -535,8 +527,8 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey }, "c", function () os.execute("xsel -p -o | xsel -i -b") end),
 
     -- User programs
-    awful.key({ modkey }, "q", function () awful.util.spawn(browser) end),
-    awful.key({ modkey }, "i", function () awful.util.spawn(browser2) end),
+    awful.key({ }, "XF86HomePage", function () awful.util.spawn(browser) end),
+    awful.key({ altkey }, "XF86HomePage", function () awful.util.spawn(browser2) end),
     awful.key({ modkey }, "s", function () awful.util.spawn(gui_editor) end),
     awful.key({ modkey }, "g", function () awful.util.spawn(graphics) end),
 
@@ -627,16 +619,16 @@ awful.rules.rules = {
                      keys = clientkeys,
                      buttons = clientbuttons,
 	                   size_hints_honor = false } },
-    { rule = { class = "URxvt" },
+    { rule = { class = "xterm" },
           properties = { opacity = 0.99 } },
 
     { rule = { class = "MPlayer" },
           properties = { floating = true } },
 
-    { rule = { class = "Dwb" },
+    { rule = { class = "Iron" },
           properties = { tag = tags[1][1] } },
 
-    { rule = { class = "Iron" },
+    { rule = { class = "tor-browser-en" },
           properties = { tag = tags[1][1] } },
 
     { rule = { instance = "plugin-container" },
